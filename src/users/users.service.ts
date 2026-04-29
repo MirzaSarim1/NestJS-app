@@ -7,8 +7,8 @@ import { User } from './user.entity';
 export class UsersService {
     constructor(@InjectRepository(User) private usersRepo: Repository<User>) {}
 
-    findByUsername(username: string) {
-        return this.usersRepo.findOne({ where: { username } });
+    findByEmail(email: string) {
+        return this.usersRepo.findOne({ where: { email } });
     }
 
     create(user: Partial<User>) {

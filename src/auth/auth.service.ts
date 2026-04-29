@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -8,28 +8,41 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
     constructor(private usersService: UsersService, private jwtService: JwtService) { }
 
-    async register(username: string, password: string) {
-        const existingUser = await this.usersService.findByUsername(username);
+    async register(
+        firstName: string,
+        lastName: string,
+        email: string,
+        password: string,
+        confirmPassword: string,
+    ) {
+        if (password !== confirmPassword) {
+            throw new BadRequestException('Password do not match');
+        }
+        const existingUser = await this.usersService.findByEmail(email);
 
         if (existingUser) {
-            throw new ConflictException('User already exists');
+            throw new ConflictException('User with this email already exists');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = await this.usersService.create({
-            username,
+            firstName,
+            lastName,
+            email,
             password: hashedPassword,
         });
 
         return {
             id: user.id,
-            username: user.username,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
         };
     }
 
-    async login(username: string, password: string) {
-        const user = await this.usersService.findByUsername(username);
+    async login(email: string, password: string) {
+        const user = await this.usersService.findByEmail(email);
 
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
@@ -43,7 +56,7 @@ export class AuthService {
 
         const payload = {
             sub: user.id,
-            username: user.username,
+            email: user.email,
             role: user.role,
         };
 

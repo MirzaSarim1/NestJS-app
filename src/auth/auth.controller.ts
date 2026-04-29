@@ -12,11 +12,17 @@ export class AuthController {
 
     @Post('register')
     register(@Body() registerDto: RegisterDto) {
-        return this.authService.register(registerDto.username, registerDto.password);
+        return this.authService.register(
+            registerDto.firstName,
+            registerDto.lastName,
+            registerDto.email,
+            registerDto.password,
+            registerDto.confrimPassword,
+        );
     }
 
     @Post('login')
     login(@Body() loginDto: LoginDto) {
-        return this.authService.login(loginDto.username, loginDto.password);
+        return this.authService.login(loginDto.email, loginDto.password);
     }
 }
