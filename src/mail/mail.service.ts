@@ -1,21 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as nodemailer from 'nodemailer';
+import { MAIL_TRANSPORTER } from './mail-transporter.token';
 
 @Injectable()
 export class MailService {
-    private transporter: nodemailer.Transporter;
 
-    constructor(private configService: ConfigService) {
-        this.transporter = nodemailer.createTransport({
-            host: this.configService.get<string>('SMTP_HOST'),
-            port: this.configService.get<number>('SMTP_PORT'),
-            auth: {
-                user: this.configService.get<string>('SMTP_USER'),
-                pass: this.configService.get<string>('SMTP_PASS'),
-            },
-        });
-    }
+    constructor(
+        @Inject(MAIL_TRANSPORTER) private transporter: nodemailer.Transporter,
+        private configService: ConfigService,
+    ) {}
 
     async sendOtpEmail(to: string, otp: string) {
         await this.transporter.sendMail({
