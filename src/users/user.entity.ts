@@ -34,4 +34,7 @@ export class User {
 
   @Column({ type: 'datetime', nullable: true })
   passwordResetOtpExpiresAt!: Date | null;
+
+  @Column({ type: 'varchar', nullable: true})
+  refreshTokenHash!: string | null;
 }

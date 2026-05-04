@@ -23,4 +23,8 @@ export class UsersService {
         Object.assign(user, attrs);
         return this.usersRepo.save(user);
     }
+
+    async findById(id: number) {
+        return this.usersRepo.findOne({ where: { id } });
+    }
 }

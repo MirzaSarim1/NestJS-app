@@ -7,6 +7,8 @@ import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ResendOtpDto } from './dto/resend-otp.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LogoutDto } from './dto/logout.dto';
 
 @ApiTags('Auth')
 @ApiBearerAuth()
@@ -38,6 +40,16 @@ export class AuthController {
     @Post('login')
     login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto.email, loginDto.password);
+    }
+
+    @Post('refresh')
+    refresh(@Body() dto: RefreshTokenDto) {
+        return this.authService.refresh(dto.refreshToken);
+    }
+
+    @Post('logout')
+    logout(@Body() dto: LogoutDto) {
+        return this.authService.logout(dto.refreshToken)
     }
 
     @Post('forgot-password')
